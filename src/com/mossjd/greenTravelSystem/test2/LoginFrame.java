@@ -14,7 +14,7 @@ public class LoginFrame extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private int attemptCount = 0;
-    private final int MAX_ATTEMPTS = 3;
+    private static final int MAX_ATTEMPTS = 3;
 
     public LoginFrame() {
         setTitle("绿色出行系统 - 登录");

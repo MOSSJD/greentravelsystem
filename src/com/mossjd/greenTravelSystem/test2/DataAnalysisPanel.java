@@ -183,7 +183,7 @@ public class DataAnalysisPanel extends JPanel {
         }
 
         JTable table = new JTable(model);
-        panel.add(new JScrollPane(table), BorderLayout.NORTH);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         // 添加饼图
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -204,7 +204,7 @@ public class DataAnalysisPanel extends JPanel {
                 false);
 
         ChartPanel chartPanel = new ChartPanel(chart);
-        panel.add(chartPanel, BorderLayout.CENTER);
+        panel.add(chartPanel, BorderLayout.SOUTH);
 
         return panel;
     }
