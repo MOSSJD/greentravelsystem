@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-public class RouteInfoPanel extends JPanel {
+public class RouteInfoPanel extends JPanel implements CanBeReloaded{
     private JTable routeTable;
     private JComboBox<String> regionComboBox;
 
@@ -18,6 +18,10 @@ public class RouteInfoPanel extends JPanel {
         setLayout(new BorderLayout());
 
         initUI();
+        loadRouteData(null);
+    }
+    @Override
+    public void reloadData() {
         loadRouteData(null);
     }
 

@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -11,7 +11,7 @@ import java.awt.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 
-public class NewsPanel extends JPanel {
+public class NewsPanel extends JPanel implements CanBeReloaded{
     private JTable newsTable;
     private JTextArea contentArea;
     private JComboBox<String> categoryCombo;
@@ -20,6 +20,10 @@ public class NewsPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
 
         initUI();
+        loadNewsData(null);
+    }
+    @Override
+    public void reloadData() {
         loadNewsData(null);
     }
 
@@ -153,8 +157,8 @@ public class NewsPanel extends JPanel {
                     // 查找底部标签并更新
                     Component[] comps = ((JPanel)((JSplitPane)getComponent(1)).getRightComponent()).getComponents();
                     for (Component comp : comps) {
-                        if (comp instanceof JLabel) {
-                            ((JLabel)comp).setText(dateStr);
+                        if (comp instanceof JLabel label) {
+                            label.setText(dateStr);
                             break;
                         }
                     }

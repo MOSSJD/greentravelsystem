@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -10,14 +10,20 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-public class RankingPanel extends JPanel {
+public class RankingPanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private JTable rankingTable;
     private JComboBox<String> timeRangeComboBox;
 
-    public RankingPanel() {
+    public RankingPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
 
         initUI();
+        loadRankingData("all");
+    }
+    @Override
+    public void reloadData() {
         loadRankingData("all");
     }
 

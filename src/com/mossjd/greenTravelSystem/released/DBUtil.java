@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -9,7 +9,7 @@ import java.sql.*;
 
 public class DBUtil {
     private static final String URL =
-            "jdbc:mysql://localhost:3306/greentravelsystem?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            "jdbc:mysql://localhost:3306/greentravelsystem?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai";
     private static final String USER = "root";
     private static final String PASSWORD = "123456";
 

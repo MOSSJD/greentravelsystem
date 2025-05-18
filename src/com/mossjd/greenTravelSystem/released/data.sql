@@ -36,3 +36,4 @@ INSERT INTO news (title, content, category) VALUES
 INSERT INTO travel_records
 (user_id, travel_date, travel_mode, start_location, end_location, distance_km, points_earned, carbon_reduction) VALUES
 (1, '2024-12-3', '公交', '火车站', '学校', 12, 4, 1);
+

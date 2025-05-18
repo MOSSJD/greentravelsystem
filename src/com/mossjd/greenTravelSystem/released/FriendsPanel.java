@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -15,7 +15,8 @@ import java.awt.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 
-public class FriendsPanel extends JPanel {
+public class FriendsPanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private int userId;
     private JTable friendsTable;
     private JTable postsTable;
@@ -28,11 +29,16 @@ public class FriendsPanel extends JPanel {
     private DefaultTableModel commentsModel;
     private int currentSelectedPostId = -1;
 
-    public FriendsPanel(int userId) {
+    public FriendsPanel(int userId, MainFrame mainFrame) {
         this.userId = userId;
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout(10, 10));
 
         initUI();
+        loadFriendsData();
+    }
+    @Override
+    public void reloadData() {
         loadFriendsData();
     }
 
@@ -410,7 +416,7 @@ public class FriendsPanel extends JPanel {
             if (addFriendRequest(friendName, message)) {
                 JOptionPane.showMessageDialog(dialog, "好友请求已发送", "成功", JOptionPane.INFORMATION_MESSAGE);
                 dialog.dispose();
-                loadFriendsData();
+                mainFrame.reloadData();
             }
         });
 

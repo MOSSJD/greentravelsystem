@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -11,16 +11,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class UserInfoPanel extends JPanel {
+public class UserInfoPanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private int userId;
     private JLabel nameLabel, phoneLabel, regionLabel, usernameLabel;
     private JButton editButton;
 
-    public UserInfoPanel(int userId) {
+    public UserInfoPanel(int userId, MainFrame mainFrame) {
         this.userId = userId;
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
 
         initUI();
+        loadUserInfo();
+    }
+    @Override
+    public void reloadData() {
         loadUserInfo();
     }
 
@@ -83,7 +89,7 @@ public class UserInfoPanel extends JPanel {
         add(infoPanel, BorderLayout.CENTER);
     }
 
-    private void loadUserInfo() {
+    public void loadUserInfo() {
         String sql = "SELECT username, name, phone, region FROM users WHERE user_id = ?";
 
         try (Connection conn = DBUtil.getConnection();
@@ -162,7 +168,7 @@ public class UserInfoPanel extends JPanel {
 
                 if (AuthService.updateUserInfo(userId, name, phone, region)) {
                     JOptionPane.showMessageDialog(editDialog, "信息更新成功", "成功", JOptionPane.INFORMATION_MESSAGE);
-                    loadUserInfo();
+                    mainFrame.reloadData();
                     editDialog.dispose();
                 } else {
                     JOptionPane.showMessageDialog(editDialog, "信息更新失败", "错误", JOptionPane.ERROR_MESSAGE);

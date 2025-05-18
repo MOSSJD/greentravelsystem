@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem;
+package com.mossjd.greenTravelSystem.test0;
 
 /**
  * @author MOSSJD

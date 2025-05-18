@@ -1,10 +1,11 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
  * @create 2025-05-17-11:17
  */
 // TravelRecordPanel.java
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -12,18 +13,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class TravelRecordPanel extends JPanel {
+public class TravelRecordPanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private JTable recordTable;
     private int userId;
     private JComboBox<String> modeComboBox;
 
-    public TravelRecordPanel(int userId) {
+    public TravelRecordPanel(int userId, MainFrame mainFrame) {
         this.userId = userId;
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
 
         initUI();
+        loadTravelRecords();
+    }
+    @Override
+    public void reloadData() {
         loadTravelRecords();
     }
 
@@ -103,7 +109,7 @@ public class TravelRecordPanel extends JPanel {
                 startField.setText("");
                 endField.setText("");
                 distanceField.setText("");
-                loadTravelRecords();
+                mainFrame.reloadData();
             }
         });
         topPanel.add(addButton, gbc);
@@ -217,6 +223,8 @@ public class TravelRecordPanel extends JPanel {
                 while (rs.next()) {
                     Timestamp timestamp = rs.getTimestamp("travel_date");
                     String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(timestamp);
+
+//                    System.out.println(timestamp);
 
                     model.addRow(new Object[]{
                             dateStr,

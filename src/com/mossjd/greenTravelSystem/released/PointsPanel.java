@@ -1,27 +1,32 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
  * @create 2025-05-17-11:16
  */
 // PointsPanel.java
-import com.mossjd.greenTravelSystem.test2.DBUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-public class PointsPanel extends JPanel {
+public class PointsPanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private int userId;
     private JLabel totalPointsLabel;
     private JTable pointsHistoryTable;
 
-    public PointsPanel(int userId) {
+    public PointsPanel(int userId, MainFrame mainFrame) {
         this.userId = userId;
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
 
         initUI();
+        loadPointsData();
+    }
+    @Override
+    public void reloadData() {
         loadPointsData();
     }
 

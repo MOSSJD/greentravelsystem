@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -20,33 +20,58 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DataAnalysisPanel extends JPanel {
-    private int userId;
-    private JTabbedPane analysisTabbedPane;
+public class DataAnalysisPanel extends JPanel implements CanBeReloaded{
+    private final MainFrame mainFrame;
+    private final int userId;
+    private JPanel travelModePanel;
+    private JTable travelModeTable;
+    private ChartPanel travelModeChartPanel;
+    private JPanel carbonTrendPanel;
+    private JTable carbonTrendTable;
+    private ChartPanel carbonTrendChartPanel;
+    private JPanel distancePanel;
+    private JTable distanceTable;
+    private ChartPanel distanceChartPanel;
 
-    public DataAnalysisPanel(int userId) {
+    public DataAnalysisPanel(int userId, MainFrame mainFrame) {
         this.userId = userId;
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
 
         initUI();
         loadAnalysisData();
     }
+    @Override
+    public void reloadData() {
+        loadAnalysisData();
+    }
 
     private void initUI() {
-        analysisTabbedPane = new JTabbedPane();
+        JTabbedPane analysisTabbedPane = new JTabbedPane();
 
         // 添加分析选项卡
-        analysisTabbedPane.addTab("出行方式统计", createTravelModePanel());
-        analysisTabbedPane.addTab("碳减排趋势", createCarbonTrendPanel());
-        analysisTabbedPane.addTab("出行距离分布", createDistancePanel());
+
+        // 创建出行方式面板
+        travelModePanel = new JPanel(new BorderLayout());
+        analysisTabbedPane.addTab("出行方式统计", travelModePanel);
+        travelModeTable = new JTable();
+        travelModePanel.add(new JScrollPane(travelModeTable), BorderLayout.CENTER);
+
+        // 创建碳减排趋势面板
+        carbonTrendPanel = new JPanel(new BorderLayout());
+        analysisTabbedPane.addTab("碳减排趋势", carbonTrendPanel);
+
+        // 创建出行距离分布面板
+        distancePanel = new JPanel(new BorderLayout());
+        analysisTabbedPane.addTab("出行距离分布", distancePanel);
+        distanceTable = new JTable();
+        distancePanel.add(new JScrollPane(distanceTable), BorderLayout.CENTER);
 
         add(analysisTabbedPane, BorderLayout.CENTER);
     }
 
-    private JPanel createTravelModePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        // 表格数据
+    private void loadAnalysisData() {
+        // 加载出行模型表格数据
         String sql = "SELECT travel_mode, COUNT(*) AS count, SUM(distance_km) AS total_distance, " +
                 "SUM(carbon_reduction) AS total_reduction FROM travel_records " +
                 "WHERE user_id = ? GROUP BY travel_mode";
@@ -74,11 +99,9 @@ public class DataAnalysisPanel extends JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "加载出行方式数据失败", "错误", JOptionPane.ERROR_MESSAGE);
         }
+        travelModeTable.setModel(model);
 
-        JTable table = new JTable(model);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
-
-        // 添加图表
+        // 加载出行模型图表数据
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (int i = 0; i < model.getRowCount(); i++) {
             String mode = (String)model.getValueAt(i, 0);
@@ -96,24 +119,23 @@ public class DataAnalysisPanel extends JPanel {
                 true,
                 false);
 
+        if (travelModeChartPanel == null) {
+            travelModeChartPanel = new ChartPanel(chart);
+            travelModePanel.add(travelModeChartPanel, BorderLayout.SOUTH);
+        }
+        else {
+            travelModeChartPanel.setChart(chart);
+        }
 
-        ChartPanel chartPanel = new ChartPanel(chart);
-        panel.add(chartPanel, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private JPanel createCarbonTrendPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
+        // 加载碳减排数据
         // 按月份统计碳减排
-        String sql = "SELECT DATE_FORMAT(travel_date, '%Y-%m') AS month, " +
+        sql = "SELECT DATE_FORMAT(travel_date, '%Y-%m') AS month, " +
                 "SUM(carbon_reduction) AS monthly_reduction " +
                 "FROM travel_records WHERE user_id = ? " +
                 "GROUP BY DATE_FORMAT(travel_date, '%Y-%m') " +
                 "ORDER BY month";
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset = new DefaultCategoryDataset();
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -134,7 +156,7 @@ public class DataAnalysisPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "加载碳减排趋势数据失败", "错误", JOptionPane.ERROR_MESSAGE);
         }
 
-        JFreeChart chart = ChartFactory.createLineChart(
+        chart = ChartFactory.createLineChart(
                 "碳减排趋势",
                 "月份",
                 "碳减排量(kg)",
@@ -144,22 +166,22 @@ public class DataAnalysisPanel extends JPanel {
                 true,
                 false);
 
-        ChartPanel chartPanel = new ChartPanel(chart);
-        panel.add(chartPanel, BorderLayout.CENTER);
+        if (carbonTrendChartPanel == null) {
+            ChartPanel chartPanel = new ChartPanel(chart);
+            carbonTrendPanel.add(chartPanel, BorderLayout.CENTER);
+        }
+        else {
+            carbonTrendChartPanel.setChart(chart);
+        }
 
-        return panel;
-    }
-
-    private JPanel createDistancePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
+        // 加载出行距离数据
         // 出行距离分布
-        String sql = "SELECT travel_mode, AVG(distance_km) AS avg_distance, " +
+        sql = "SELECT travel_mode, AVG(distance_km) AS avg_distance, " +
                 "MAX(distance_km) AS max_distance, MIN(distance_km) AS min_distance " +
                 "FROM travel_records WHERE user_id = ? AND distance_km IS NOT NULL " +
                 "GROUP BY travel_mode";
 
-        DefaultTableModel model = new DefaultTableModel();
+        model = new DefaultTableModel();
         model.setColumnIdentifiers(new String[]{"出行方式", "平均距离(km)", "最大距离(km)", "最小距离(km)"});
 
         try (Connection conn = DBUtil.getConnection();
@@ -181,19 +203,18 @@ public class DataAnalysisPanel extends JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "加载出行距离数据失败", "错误", JOptionPane.ERROR_MESSAGE);
         }
+        distanceTable.setModel(model);
 
-        JTable table = new JTable(model);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         // 添加饼图
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset = new DefaultCategoryDataset();
         for (int i = 0; i < model.getRowCount(); i++) {
             String mode = (String)model.getValueAt(i, 0);
             double avg = Double.parseDouble(model.getValueAt(i, 1).toString());
             dataset.addValue(avg, "平均距离", mode);
         }
 
-        JFreeChart chart = ChartFactory.createBarChart(
+        chart = ChartFactory.createBarChart(
                 "各出行方式平均距离",
                 "出行方式",
                 "距离(km)",
@@ -202,14 +223,13 @@ public class DataAnalysisPanel extends JPanel {
                 true,
                 true,
                 false);
+        if (distanceChartPanel == null) {
+            distanceChartPanel = new ChartPanel(chart);
+            distancePanel.add(distanceChartPanel, BorderLayout.SOUTH);
+        }
+        else {
+            distanceChartPanel.setChart(chart);
+        }
 
-        ChartPanel chartPanel = new ChartPanel(chart);
-        panel.add(chartPanel, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
-    private void loadAnalysisData() {
-        // 数据已在各子面板中加载
     }
 }

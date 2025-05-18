@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -10,16 +10,22 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-public class CarbonReductionPanel extends JPanel {
+public class CarbonReductionPanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private int userId;
     private JLabel totalReductionLabel;
     private JTable reductionTable;
 
-    public CarbonReductionPanel(int userId) {
+    public CarbonReductionPanel(int userId, MainFrame mainFrame) {
         this.userId = userId;
+        this.mainFrame = mainFrame;
         setLayout(new BorderLayout());
 
         initUI();
+        loadCarbonReductionData();
+    }
+    @Override
+    public void reloadData() {
         loadCarbonReductionData();
     }
 

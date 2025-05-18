@@ -1,4 +1,4 @@
-package com.mossjd.greenTravelSystem.test2;
+package com.mossjd.greenTravelSystem.released;
 
 /**
  * @author MOSSJD
@@ -10,7 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-public class SharedVehiclePanel extends JPanel {
+public class SharedVehiclePanel extends JPanel implements CanBeReloaded{
+    private MainFrame mainFrame;
     private JTable vehicleTable;
     private JComboBox<String> typeComboBox, regionComboBox;
 
@@ -18,6 +19,10 @@ public class SharedVehiclePanel extends JPanel {
         setLayout(new BorderLayout());
 
         initUI();
+        loadVehicleData(null, null);
+    }
+    @Override
+    public void reloadData() {
         loadVehicleData(null, null);
     }
 

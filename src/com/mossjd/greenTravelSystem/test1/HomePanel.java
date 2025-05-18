@@ -4,7 +4,7 @@ package com.mossjd.greenTravelSystem.test1;
  * @author MOSSJD
  * @create 2025-05-17-10:43
  */
-import com.mossjd.greenTravelSystem.test2.NewsPanel;
+import com.mossjd.greenTravelSystem.released.NewsPanel;
 
 import javax.swing.*;
 import java.awt.*;
